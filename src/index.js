@@ -3,18 +3,25 @@ import { View, Text } from 'react-native';
 import PropTypes from 'prop-types';
 import { getStyles } from './rules';
 
-const Speedometer = ({ value, totalValue, size, outerColor, innerColor, internalColor, style, innerCircleStyle, outerCircleStyle, halfCircleStyle, showText, text, textStyle, showLabels, labelStyle, showPercent, percentStyle, percentSize }) => {
+const Speedometer = ({minValue, value, totalValue, maxView, minView, valueView, size, outerColor, innerColor, internalColor,
+                       style, innerCircleStyle, outerCircleStyle, halfCircleStyle, showText, text, textStyle, showLabels,
+                       labelStyle, showPercent, percentStyle, percentSize }) => {
   const styles = getStyles(size, percentSize);
-  const degreesValue = (value > totalValue) ? totalValue : value;
+
+  value = parseFloat(value)
+  totalValue = parseFloat(totalValue)
+
+  const degreesValue = (value > totalValue) ? totalValue - minValue : ((value < minValue) ? 0 : value - minValue)
   const percentValue = parseInt(String((value * 100) / totalValue).split('.')[0]);
-  const degrees = ((degreesValue * 180) / ((totalValue === 0) ? 1 : totalValue)) - 90;
+  const degrees = ((degreesValue * 180) / ((totalValue === 0) ? 1 : totalValue - minValue)) - 90;
+
   const degressStyle = {
     backgroundColor: internalColor,
     transform: [{ translateX: size / 4 }, { rotate: `${degrees}deg` }, { translateX: (size / 4 * -1) }],
   };
 
   const percentElement = (showPercent) ? (
-    <Text style={[{ backgroundColor: innerColor }, percentStyle]} numberOfLines={1}>{percentValue}%</Text>
+    <Text style={[{ backgroundColor: innerColor }, percentStyle]} numberOfLines={1}>{valueView}</Text>
   ) : null;
 
   const textElement = ((showText) && (text)) ? (
@@ -23,8 +30,8 @@ const Speedometer = ({ value, totalValue, size, outerColor, innerColor, internal
 
   const labelsElement = (showLabels) ? (
     <View style={[styles.labelsView, { width: size }]}>
-      <Text style={[styles.initialLabel, labelStyle]} numberOfLines={1}>0</Text>
-      <Text style={[styles.finalLabel, labelStyle]} numberOfLines={1}>{totalValue}</Text>
+      <Text style={[styles.initialLabel, labelStyle]} numberOfLines={1}>Min:{minView}</Text>
+      <Text style={[styles.finalLabel, labelStyle]} numberOfLines={1}>Max:{maxView}</Text>
     </View>
   ) : null;
 
@@ -43,6 +50,7 @@ const Speedometer = ({ value, totalValue, size, outerColor, innerColor, internal
 };
 
 Speedometer.propTypes = {
+  minValue: PropTypes.number.isRequired,
   value: PropTypes.number.isRequired,
   totalValue: PropTypes.number.isRequired,
   size: PropTypes.number,
