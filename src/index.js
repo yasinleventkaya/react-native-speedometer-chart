@@ -5,7 +5,7 @@ import { getStyles } from './rules';
 
 const Speedometer = ({minValue, value, totalValue, maxView, minView, valueView, size, outerColor, innerColor, internalColor,
                        style, innerCircleStyle, outerCircleStyle, halfCircleStyle, showText, text, textStyle, showLabels,
-                       labelStyle, showPercent, percentStyle, percentSize }) => {
+                       labelStyle, showPercent, percentStyle, percentSize, labelTextMax, labelTextMin }) => {
   const styles = getStyles(size, percentSize);
 
   value = parseFloat(value)
@@ -30,8 +30,8 @@ const Speedometer = ({minValue, value, totalValue, maxView, minView, valueView, 
 
   const labelsElement = (showLabels) ? (
     <View style={[styles.labelsView, { width: size }]}>
-      <Text style={[styles.initialLabel, labelStyle]} numberOfLines={1}>Min:{minView}</Text>
-      <Text style={[styles.finalLabel, labelStyle]} numberOfLines={1}>Max:{maxView}</Text>
+      <Text style={[styles.initialLabel, labelStyle]} numberOfLines={1}>{labelTextMin} {minView}</Text>
+      <Text style={[styles.finalLabel, labelStyle]} numberOfLines={1}>{labelTextMax} {maxView}</Text>
     </View>
   ) : null;
 
@@ -72,6 +72,8 @@ Speedometer.propTypes = {
   outerCircleStyle: PropTypes.object,
   halfCircleStyle: PropTypes.object,
   percentSize: PropTypes.number,
+  labelTextMax: PropTypes.string,
+  labelTextMin: PropTypes.string,
 };
 
 Speedometer.defaultProps = {
@@ -88,6 +90,8 @@ Speedometer.defaultProps = {
   showPercent: false,
   percentStyle: {},
   percentSize: 0.5,
+  labelTextMax: '',
+  labelTextMin: '',
 };
 
 export default Speedometer;
